@@ -1,0 +1,104 @@
+https://www.youtube.com/watch?app=desktop&v=MfKnvCC_eZQ&ab_channel=TechHackTamil
+
+In this tutorial, we will show you how to install ERPNext Centos7 /RHEL  7 using one of our optimized ERPNext hosting servers.
+
+How to Install ERPNext in CentOS 7 / RHEL 7
+
+Step-1
+ python -V
+ #[user@vultr ~]$ python -V
+ #Python 2.7.5
+Step-2
+ sudo yum groupinstall -y "Development tools"
+Step-3
+ sudo yum install -y redhat-lsb-core git python3-setuptools python3-devel openssl-devel libffi-devel
+Step-4
+ sudo yum install epel-release
+Step-5
+ sudo pip3 install --upgrade pip setuptools
+Step-6
+ sudo pip3 install ansible
+Step-7
+ wget https://downloads.mariadb.com/MariaDB...
+ echo "7a24f5580421fd353dc22c5439001bdaec86c54ed911c80e5482f62921125ac8 mariadb_repo_setup" \
+     | sha256sum -c -
+ chmod +x mariadb_repo_setup
+ sudo ./mariadb_repo_setup \ --mariadb-server-version="mariadb-10.5"
+ sudo yum install MariaDB-server MariaDB-backup mysql-devel
+
+Step-8
+ sudo nano /etc/my.cnf
+ (Add the following lines)
+ 
+ [mysqld]
+ innodb-file-format=barracuda
+ innodb-file-per-table=1
+ innodb-large-prefix=1
+ character-set-client-handshake = FALSE
+ character-set-server = utf8mb4
+ collation-server = utf8mb4_unicode_ci
+
+ [mysql]
+ default-character-set = utf8mb4
+Step-9
+ sudo systemctl start mariadb.service
+ sudo systemctl enable mariadb.service
+Step-10
+ sudo mysql_secure_installation
+ (Change Your MySql Password)
+ sudo service mariadb.service restart
+Step-11
+ 
+ sudo curl --silent --location https://rpm.nodesource.com/setup_8.x | sudo bash -
+ sudo yum -y install nginx nodejs redis
+Step-12 
+ sudo systemctl start nginx
+ sudo systemctl enable nginx
+Step-13
+ sudo systemctl start redis
+ sudo systemctl enable redis
+Step-14
+ curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yum.repos.d/yarn.repo
+ sudo rpm --import https://dl.yarnpkg.com/rpm/pubkey.gpg
+ sudo yum install yarn
+Step-15
+ sudo yum -y install libXrender libXext xorg-x11-fonts-75dpi xorg-x11-fonts-Type1
+ wget https://github.com/wkhtmltopdf/wkhtml...
+ sudo tar -xf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz -C /opt
+ sudo ln -s /opt/wkhtmltox/bin/wkhtmltopdf /usr/bin/wkhtmltopdf
+ sudo ln -s /opt/wkhtmltox/bin/wkhtmltoimage /usr/bin/wkhtmltoimage
+
+ wkhtmltopdf -V
+ (wkhtmltopdf 0.12.4 (with patched qt)
+Step-16
+ sudo adduser frappe
+ sudo usermod -aG wheel frappe
+Step-17
+  sudo nano /etc/environment
+  (Add Following Line)
+ 
+  LC_ALL=en_US.UTF-8
+  LANG=en_US.utf-8
+  LC_ALL=en_US.utf-8
+Step-18
+ su frappe
+ sudo -H pip3 install frappe-bench
+ bench --version
+Step-19
+ bench init --frappe-branch version-12 frappe-bench
+Step-20
+ cd frappe-bench
+ ./env/bin/pip install -e apps/frappe/
+Step-21
+ cd frappe-bench
+ bench new-site techhack
+Step-22
+ sudo nano /etc/hosts
+ 127.0.0.1 techhack
+Step-23
+ bench get-app --branch version-12 erpnext
+ ./env/bin/pip install -e apps/erpnext/
+Step-24
+ bench --site techhack install-app erpnext
+ Bench Start
+
